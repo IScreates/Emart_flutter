@@ -1,13 +1,18 @@
+// android/app/build.gradle.kts
+
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("org.jetbrains.kotlin.android")
+    // Flutter plugin must come AFTER Android and Kotlin
     id("dev.flutter.flutter-gradle-plugin")
+    // ✅ Google Services plugin for Firebase
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.example.myapp"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36 // ✅ Use 34 for stability (36 is not final yet)
+
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -16,29 +21,48 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = "11"
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.myapp"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = flutter.minSdkVersion // ✅ Firebase requires at least SDK 21
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
-        }
+  buildTypes {
+    getByName("release") {
+        // Disable resource shrinking since code shrinking is off
+        isMinifyEnabled = false
+        isShrinkResources = false
+
+        // ✅ Prevent crash if no signing config
+        signingConfig = signingConfigs.getByName("debug")
     }
+
+    getByName("debug") {
+        isMinifyEnabled = false
+        isShrinkResources = false
+    }
+}
+
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+
+    // ✅ Firebase BOM - keeps all Firebase libraries in sync
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+
+    // ✅ Add Firebase SDKs you’re actually using:
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
 }

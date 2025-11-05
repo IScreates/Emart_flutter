@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "806748027575",
+    "firebase_url": "https://emart1-f7dc7-default-rtdb.firebaseio.com",
+    "project_id": "emart1-f7dc7",
+    "storage_bucket": "emart1-f7dc7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806748027575:android:ff158da2281bcbd98e2b32",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACzDcLveNisKL31g5nLW6rRalaZ_945-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
