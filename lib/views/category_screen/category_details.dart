@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:myapp/controller/product_controller.dart';
 import 'package:myapp/widgets_common/bg_widget.dart';
 import 'package:myapp/consts/consts.dart';
 import 'package:myapp/views/category_screen/item_details.dart';
@@ -10,6 +11,7 @@ class CategoryDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(ProductController());
     return bgWidget(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -32,8 +34,8 @@ class CategoryDetails extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: List.generate(
-                    6,
-                    (index) => "Baby Clothing".text
+                    controller.subcat.length,
+                    (index) => "${controller.subcat[index]}".text
                         .size(12)
                         .fontFamily(semibold)
                         .color(darkFontGrey)

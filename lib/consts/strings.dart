@@ -1,6 +1,6 @@
 const appname = "eMart";
 const appversion = "Version 1.0.0";
-const credits = "@Baaba Devs";
+const credits = "@Shreeyash Shinde";
 const email = "Email";
 const emailHint = "admin@admin.com";
 const password = "Password";
@@ -66,6 +66,6 @@ const loggedin = "Logged in Successfullly";
 const loggedout = "Logged out Successfully";
 
 //profile strings
-const whslist = "Whishlist", orders = "My Orders", messages = "Messages";
+const whslist = "Whishlist", orders = "My Orders", messages = "Messages", oldpass = "Old Password", newpass = "New Password";
 
 //message screen

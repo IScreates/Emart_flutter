@@ -8,24 +8,18 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myapp/consts/consts.dart';
-import 'package:path/path.dart'; // ✅ Ensure path: ^1.9.0 in pubspec.yaml
+import 'package:path/path.dart';
 
 class ProfileController extends GetxController {
-  // ✅ Observables
   var profileImgPath = ''.obs;
   var profileImgLink = ''.obs;
   var isLoading = false.obs;
 
-  // ✅ Text controllers
+  var storage;
   final nameController = TextEditingController();
-  final passController = TextEditingController();
+  final oldpassController = TextEditingController();
+  final newpassController = TextEditingController();
 
-  // ✅ Firebase instances
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-
-  // ✅ Pick image from gallery
   Future<void> changeImage(BuildContext context) async {
     try {
       final picker = ImagePicker();
@@ -51,67 +45,55 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ✅ Upload profile image to Firebase Storage
   Future<void> uploadProfileImage() async {
+    if (profileImgPath.value.isEmpty) return;
+    final filename = basename(profileImgPath.value);
+    final destination = 'profile_images/${auth.currentUser!.uid}/$filename';
+
     try {
-      final user = _auth.currentUser;
-      if (user == null) {
-        debugPrint("⚠️ No user found to upload profile image.");
-        return;
-      }
-
-      final filename = basename(profileImgPath.value);
-      final destination = 'profile_images/${user.uid}/$filename';
-
-      Reference ref = _storage.ref().child(destination);
+      Reference ref = storage.ref().child(destination);
       await ref.putFile(File(profileImgPath.value));
-
-      final downloadUrl = await ref.getDownloadURL();
-      profileImgLink.value = downloadUrl;
-      debugPrint("✅ Profile image uploaded: $downloadUrl");
+      profileImgLink.value = await ref.getDownloadURL();
     } catch (e) {
-      debugPrint("❌ Error uploading profile image: $e");
+      debugPrint("Error uploading profile image: $e");
     }
   }
 
-  // ✅ Update user info in Firestore
-  Future<void> updateProfile({
-    required BuildContext context,
-    required String name,
-    required String password,
-  }) async {
+  Future<void> updateProfile({required String name, required String imgUrl}) async {
+    var store = firestore.collection(usersCollection).doc(auth.currentUser!.uid);
+    await store.set({
+      'name': name,
+      'imageUrl': imgUrl,
+    }, SetOptions(merge: true));
+  }
+
+  // ✅ Returns true on success, false on failure
+  Future<bool> changeAuthPassword(
+      {required BuildContext context, required String email, required String oldPassword, required String newPassword}) async {
+    final cred = EmailAuthProvider.credential(email: email, password: oldPassword);
+
     try {
-      isLoading(true);
-
-      final user = _auth.currentUser;
-      if (user == null) {
-        VxToast.show(context, msg: "No user logged in");
-        return;
+      await auth.currentUser!.reauthenticateWithCredential(cred);
+      await auth.currentUser!.updatePassword(newPassword);
+      return true; // Return true on success
+    } on FirebaseAuthException catch (e) {
+      // On failure, show an error message and return false.
+      String errorMessage;
+      switch (e.code) {
+        case 'wrong-password':
+          errorMessage = 'The old password you entered is incorrect.';
+          break;
+        case 'weak-password':
+          errorMessage = 'The new password is too weak.';
+          break;
+        default:
+          errorMessage = e.message ?? "An error occurred.";
       }
-
-      String imageUrl = profileImgLink.value;
-
-      // If no new image uploaded, retain existing one
-      if (imageUrl.isEmpty) {
-        final doc = await _firestore
-            .collection(usersCollection)
-            .doc(user.uid)
-            .get();
-        imageUrl = doc.data()?['imageUrl'] ?? '';
-      }
-
-      await _firestore.collection(usersCollection).doc(user.uid).set({
-        'name': name,
-        'password': password,
-        'imageUrl': imageUrl,
-      }, SetOptions(merge: true));
-
-      VxToast.show(context, msg: "Profile updated successfully");
+      VxToast.show(context, msg: errorMessage);
+      return false;
     } catch (e) {
-      VxToast.show(context, msg: "Error updating profile: $e");
-      debugPrint("❌ Error updating profile: $e");
-    } finally {
-      isLoading(false);
+      VxToast.show(context, msg: "An unexpected error occurred.");
+      return false;
     }
   }
 }

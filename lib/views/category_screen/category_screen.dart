@@ -4,6 +4,7 @@ import 'package:myapp/consts/colors.dart';
 import 'package:myapp/consts/lists.dart';
 import 'package:myapp/consts/strings.dart';
 import 'package:myapp/consts/styles.dart';
+import 'package:myapp/controller/product_controller.dart';
 import 'package:myapp/views/category_screen/category_details.dart';
 import 'package:myapp/widgets_common/bg_widget.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -13,6 +14,9 @@ class CategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var controller = Get.put(ProductController());
+
     return bgWidget(
       child: Scaffold(
         appBar: AppBar(title: categories.text.fontFamily(bold).make()),
@@ -47,6 +51,7 @@ class CategoryScreen extends StatelessWidget {
                   .outerShadowSm
                   .make()
                   .onTap(() {
+                    controller.getSubCategories(categoriesList[index]);
                     // ✅ Fixed: open CategoryDetails instead of ItemDetails
                     Get.to(() => CategoryDetails(title: categoriesList[index]));
                   });

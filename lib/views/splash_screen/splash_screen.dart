@@ -1,10 +1,11 @@
-// splash_screen.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:myapp/consts/consts.dart';
-import 'package:myapp/views/auth_screen/home_screen/home.dart';
-import 'package:myapp/views/auth_screen/login_screen.dart';
-import 'package:myapp/widgets_common/applogo_widget.dart';
+
+
+import '../../widgets_common/applogo_widget.dart';
+import '../auth_screen/home_screen/home.dart';
+import '../auth_screen/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,17 +15,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // method to change screen
+  // Change screen after a delay and check auth status
   void changeScreen() {
     Future.delayed(const Duration(seconds: 3), () {
-      // Get.to(() => const LoginScreen());
-      auth.authStateChanges().listen((User? user) {
-        if (user == null && mounted) {
-          Get.to(() => LoginScreen());
-        } else {
-          Get.to(() => Home());
-        }
-      });
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        Get.offAll(() => const LoginScreen());
+      } else {
+        Get.offAll(() => const Home());
+      }
     });
   }
 

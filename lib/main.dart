@@ -1,9 +1,10 @@
-// lib/main.dart
-//import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
+import 'views/splash_screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:myapp/consts/consts.dart';
-import 'package:myapp/views/splash_screen/splash_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'consts/consts.dart';
+
 import 'firebase_options.dart'; // ✅ Required for DefaultFirebaseOptions
 
 Future<void> main() async {
@@ -13,10 +14,6 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
-}
-
-class DefaultFirebaseOptions {
-  static FirebaseOptions? get currentPlatform => null;
 }
 
 class MyApp extends StatelessWidget {
