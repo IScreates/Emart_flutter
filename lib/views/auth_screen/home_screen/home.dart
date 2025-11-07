@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
 import 'package:myapp/consts/consts.dart';
 import 'package:myapp/controller/home_controller.dart';
-import 'package:myapp/views/auth_screen/home_screen/home_screen.dart';
 import 'package:myapp/views/cart_screen/cart_screen.dart';
 import 'package:myapp/views/category_screen/category_screen.dart';
 import 'package:myapp/views/profile_screen/profile_screen.dart';
+import 'package:myapp/widgets_common/exit_dialog.dart';
+
+import 'home_screen.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -42,21 +44,29 @@ class Home extends StatelessWidget {
       const ProfileScreen(),
     ];
 
-    return Scaffold(
-      backgroundColor: whiteColor,
-      body: Obx(() => navBody[homeController.currentNavIndex.value]),
-      bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
-          currentIndex: homeController.currentNavIndex.value,
-          selectedItemColor: redColor,
-          unselectedItemColor: darkFontGrey,
-          selectedLabelStyle: const TextStyle(fontFamily: semibold),
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: whiteColor,
-          items: navbarItems,
-          onTap: (value) {
-            homeController.currentNavIndex.value = value;
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        showDialog(
+          barrierDismissible: false,
+            context: context, builder: (context) => exitDialog(context));
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: whiteColor,
+        body: Obx(() => navBody[homeController.currentNavIndex.value]),
+        bottomNavigationBar: Obx(
+          () => BottomNavigationBar(
+            currentIndex: homeController.currentNavIndex.value,
+            selectedItemColor: redColor,
+            unselectedItemColor: darkFontGrey,
+            selectedLabelStyle: const TextStyle(fontFamily: semibold),
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: whiteColor,
+            items: navbarItems,
+            onTap: (value) {
+              homeController.currentNavIndex.value = value;
+            },
+          ),
         ),
       ),
     );

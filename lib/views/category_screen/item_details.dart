@@ -5,7 +5,12 @@ import 'package:myapp/consts/lists.dart';
 class ItemDetails extends StatelessWidget {
   String? title;
 
-  ItemDetails({super.key, this.title});
+  final dynamic data;
+
+  ItemDetails({super.key, this.title, this.data});
+
+  get controller => null;
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +40,14 @@ class ItemDetails extends StatelessWidget {
                   children: [
                     // ✅ Swiper Section
                     VxSwiper.builder(
-                      itemCount: 3,
+                      itemCount: data['p_imgs'].length,
                       aspectRatio: 16 / 9,
                       autoPlay: true,
+                      viewportFraction: 1.0,
                       enlargeCenterPage: true,
                       itemBuilder: (context, index) {
-                        return Image.asset(
-                          imgFc5,
+                        return Image.network(
+                          data['p_imgs'][index],
                           width: double.infinity,
                           fit: BoxFit.cover,
                         );
@@ -59,17 +65,19 @@ class ItemDetails extends StatelessWidget {
 
                     10.heightBox,
                     VxRating(
+                      isSelectable: false,
+                      value: double.parse(data['p_rating']),
                       onRatingUpdate: (value) {},
                       normalColor: textfieldGrey,
                       selectionColor: golden,
                       count: 5,
                       size: 25,
-                      stepInt: true,
+                      maxRating: 5,
                     ),
 
                     10.heightBox,
 
-                    "\$30,000".text
+                    "${data['p_price']}".numCurrency.text
                         .color(redColor)
                         .fontFamily(bold)
                         .size(18)
@@ -90,7 +98,7 @@ class ItemDetails extends StatelessWidget {
                                     .color(whiteColor)
                                     .make(),
                                 5.heightBox,
-                                "In House Brands".text
+                                "${data['p_seller']}".text
                                     .fontFamily(semibold)
                                     .color(darkFontGrey)
                                     .make(),
@@ -127,11 +135,11 @@ class ItemDetails extends StatelessWidget {
                                 ),
                                 Row(
                                   children: List.generate(
-                                    3,
+                                    data['p_colors'].length,
                                     (index) => VxBox()
                                         .size(40, 40)
                                         .roundedFull
-                                        .color(Vx.randomPrimaryColor)
+                                        .color(Color(data['p_colors'][index]).withOpacity(1.0))
                                         .margin(
                                           const EdgeInsets.symmetric(
                                             horizontal: 4,
@@ -300,7 +308,18 @@ class ItemDetails extends StatelessWidget {
                   borderRadius: BorderRadius.zero, // rectangular shape
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                controller.addToCart(
+                  color: data['p_colors'][controller.colorIndex.value],
+                  context: context,
+                  img: data['p_imgs'][0],
+                  qty: controller.quantity.value,
+                  sellername: data['p_seller'],
+                  title: data['p_name'],
+                  tprice: controller.totalPrice.value
+                );
+                VxToast.show(context, msg: "Added to cart");
+              },
               child: Text(
                 "Add to Cart",
                 style: TextStyle(
