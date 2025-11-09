@@ -29,14 +29,14 @@ const categoriesList = [
   furniture,
 ];
 const categoriesImages = [
+  imgFc8,
   imgFc1,
   imgFc2,
   imgFc3,
   imgFc4,
   imgFc5,
-  imgFc6,
   imgFc7,
-  imgFc8,
+  imgFc6,
   imgFc9,
 ];
 
@@ -52,3 +52,8 @@ const itemDetailButtonsList = [
 const profileButtonsList = [whslist, orders, messages];
 
 const profileButtonsIcon = [icOrder, icOrder, icMessages];
+
+const paymentMethodsImg = [imgPaypal,imgStripe,imgCod];
+const paymentMethods = [paypal,stripe,cod];
+
+

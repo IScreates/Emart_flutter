@@ -1,5 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:myapp/consts/consts.dart';
 import 'package:myapp/consts/lists.dart';
 import 'package:myapp/controller/product_controller.dart';
@@ -13,11 +13,12 @@ class ItemDetails extends StatelessWidget {
 
   ItemDetails({super.key, this.title, this.data});
 
-  get controller => null;
-
   @override
   Widget build(BuildContext context) {
     var controller = Get.find<ProductController>();
+    // Check if the item is a favorite when the screen loads
+    controller.checkIfFav(data);
+
     return WillPopScope(
       onWillPop: () async {
         controller.resetValues();
@@ -38,9 +39,22 @@ class ItemDetails extends StatelessWidget {
               onPressed: () {},
               icon: const Icon(Icons.share, color: darkFontGrey),
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.favorite_outline, color: darkFontGrey),
+            Obx(
+              () => IconButton(
+                onPressed: () {
+                  if (controller.isFav.value) {
+                    // Corrected method name
+                    controller.removeFromWishlist(data.id,context);
+                  } else {
+                    // Corrected method name
+                    controller.addToWishlist(data.id,context);
+                  }
+                },
+                icon: Icon(
+                  Icons.favorite_outlined,
+                  color: controller.isFav.value ? redColor : darkFontGrey,
+                ),
+              ),
             ),
           ],
         ),
@@ -139,7 +153,7 @@ class ItemDetails extends StatelessWidget {
                                         VxBox()
                                             .size(40, 40)
                                             .roundedFull
-                                            .color(Color(data['p_colors'][index]).withOpacity(1.0))
+                                            .color(Color(int.parse(data['p_colors'][index].toString())).withOpacity(1.0))
                                             .margin(
                                               const EdgeInsets.symmetric(
                                                 horizontal: 4,
@@ -291,7 +305,6 @@ class ItemDetails extends StatelessWidget {
                         sellername: data['p_seller'],
                         title: data['p_name'],
                         tprice: controller.totalPrice.value);
-                    VxToast.show(context, msg: "Added to cart");
                   } else {
                     VxToast.show(context, msg: "Quantity cannot be zero");
                   }

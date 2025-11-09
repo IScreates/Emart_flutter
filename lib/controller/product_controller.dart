@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:myapp/consts/consts.dart';
@@ -9,6 +10,7 @@ class ProductController extends GetxController {
   var quantity = 0.obs;
   var colorIndex = 0.obs;
   var totalPrice = 0.obs;
+  var isFav = false.obs;
 
   getSubCategories(title) async {
     subcat.clear();
@@ -41,10 +43,8 @@ class ProductController extends GetxController {
     totalPrice.value = price * quantity.value;
   }
 
-  addToCart({
-    title, img, sellername, color, qty, tprice, context
-  }) async {
-    // Prevent adding if quantity is zero
+  addToCart(
+      {title, img, sellername, color, qty, tprice, context}) async {
     if (qty > 0) {
       await firestore.collection(cartCollection).doc().set({
         'title': title,
@@ -53,7 +53,6 @@ class ProductController extends GetxController {
         'color': color,
         'qty': qty,
         'tprice': tprice,
-        // Correctly get the user ID from the auth instance
         'added_by': auth.currentUser!.uid,
       }).catchError((error) {
         VxToast.show(context, msg: error.toString());
@@ -63,10 +62,36 @@ class ProductController extends GetxController {
       VxToast.show(context, msg: "Quantity cannot be zero");
     }
   }
-  
-  resetValues(){
+
+  resetValues() {
     totalPrice.value = 0;
     quantity.value = 0;
     colorIndex.value = 0;
+  }
+
+  // Corrected method name and implementation
+  addToWishlist(docId, context) async {
+    await firestore.collection(productsCollection).doc(docId).set({
+      'p_wishlist': FieldValue.arrayUnion([auth.currentUser!.uid])
+    }, SetOptions(merge: true));
+    isFav.value = true;
+    VxToast.show(context, msg: "Added to wishlist");
+  }
+
+  // Corrected method name and implementation
+  removeFromWishlist(docId, context) async {
+    await firestore.collection(productsCollection).doc(docId).set({
+      'p_wishlist': FieldValue.arrayRemove([auth.currentUser!.uid])
+    }, SetOptions(merge: true));
+    isFav.value = false;
+    VxToast.show(context, msg: "Removed from wishlist");
+  }
+
+  checkIfFav(data) async {
+    if (data['p_wishlist'].contains(auth.currentUser!.uid)) {
+      isFav.value = true;
+    } else {
+      isFav.value = false;
+    }
   }
 }

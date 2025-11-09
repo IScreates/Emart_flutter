@@ -1,5 +1,6 @@
 import 'package:myapp/consts/firebase_const.dart';
 
+
 class FirestoreServices {
   //get users data
   static getUser(id) {
@@ -36,7 +37,7 @@ class FirestoreServices {
 
   //get all chat msg
 static getChatMessages(docId){
-    return firestore.collection(chatCollection).doc(docId).collection(messagesCollection).orderBy('created_on', descending: true).snapshots();
+    return firestore.collection(chatCollection).doc(docId).collection(messagesCollection).orderBy('created_on', descending: false).snapshots();
 }
 
   static getAllMessages() {

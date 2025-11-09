@@ -69,3 +69,7 @@ const loggedout = "Logged out Successfully";
 const whslist = "Whishlist", orders = "My Orders", messages = "Messages", oldpass = "Old Password", newpass = "New Password";
 
 //message screen
+
+//payment method strings
+
+const paypal = "Paypal", stripe = "Stripe", cod = "Cash On Delivery";

@@ -82,8 +82,11 @@ class CategoryDetails extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
+                              controller.checkIfFav(data[index]);
                               // ✅ Navigate to ItemDetails screen
-                              Get.to(() => ItemDetails(title: "${data[index]['p_name']}",data: data[index]));
+                              Get.to(() => ItemDetails(title: "${data[index]['p_name']}",data: data[index]),
+
+                              );
                             },
                             child:
                             Column(
