@@ -10,36 +10,34 @@ class ChatsController extends GetxController {
     getChatId();
   }
 
-  var isLoading = false.obs;
-
   var chats = firestore.collection(chatCollection);
-  
-  // Get arguments from the previous screen
+
   var friendName = Get.arguments[0];
   var friendId = Get.arguments[1];
 
-  // Get sender details from HomeController
   var senderName = Get.find<HomeController>().username.value;
   var currentId = auth.currentUser!.uid;
 
   var msgController = TextEditingController();
-  dynamic chatDocId;
+
+  // Make chatDocId reactive
+  var chatDocId = ''.obs;
+  var isLoading = false.obs;
 
   // Create a unique and deterministic chat ID
   getChatId() async {
-
     isLoading(true);
+    String newChatDocId;
     if (currentId.hashCode <= friendId.hashCode) {
-      chatDocId = '$currentId-$friendId';
+      newChatDocId = '$currentId-$friendId';
     } else {
-      chatDocId = '$friendId-$currentId';
+      newChatDocId = '$friendId-$currentId';
     }
 
-    var doc = await chats.doc(chatDocId).get();
+    var doc = await chats.doc(newChatDocId).get();
 
-    // If the chat document doesn't exist, create it
     if (!doc.exists) {
-      await chats.doc(chatDocId).set({
+      await chats.doc(newChatDocId).set({
         'created_on': FieldValue.serverTimestamp(),
         'last_msg': '',
         'users': {friendId: null, currentId: null},
@@ -47,28 +45,26 @@ class ChatsController extends GetxController {
         'sender_name': senderName,
       });
     }
+    chatDocId.value = newChatDocId;
     isLoading(false);
   }
 
   // Send a message
   sendMsg(String msg) async {
     if (msg.trim().isNotEmpty) {
-      // Update the main chat document with the last message details
-      chats.doc(chatDocId).update({
+      chats.doc(chatDocId.value).update({
         'last_msg': msg,
         'created_on': FieldValue.serverTimestamp(),
         'toId': friendId,
         'fromId': currentId,
       });
 
-      // Add the new message to the 'messages' subcollection
-      chats.doc(chatDocId).collection(messagesCollection).doc().set({
+      chats.doc(chatDocId.value).collection(messagesCollection).doc().set({
         'created_on': FieldValue.serverTimestamp(),
         'msg': msg,
         'uid': currentId,
       });
 
-      // Clear the text field after sending
       msgController.clear();
     }
   }

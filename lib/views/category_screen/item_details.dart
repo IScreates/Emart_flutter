@@ -110,11 +110,9 @@ class ItemDetails extends StatelessWidget {
                             child: Icon(
                               Icons.message_rounded,
                               color: darkFontGrey,
-                            )
-                          ).onTap((){
-                            Get.to(()=>ChatScreen(),
-                              arguments: [data['p_seller'], data['vendor_id ']]
-                            );
+                            ),
+                          ).onTap(() {
+                            Get.to(() => const ChatScreen(), arguments: [data['p_seller'], data['vendor_id']]);
                           })
                         ],
                       ).box.height(60).color(textfieldGrey).padding(const EdgeInsets.symmetric(horizontal: 16)).make(),
