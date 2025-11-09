@@ -44,23 +44,19 @@ class ProductController extends GetxController {
   }
 
   addToCart(
-      {title, img, sellername, color, qty, tprice, context}) async {
-    if (qty > 0) {
-      await firestore.collection(cartCollection).doc().set({
-        'title': title,
-        'img': img,
-        'sellername': sellername,
-        'color': color,
-        'qty': qty,
-        'tprice': tprice,
-        'added_by': auth.currentUser!.uid,
-      }).catchError((error) {
-        VxToast.show(context, msg: error.toString());
-      });
-      VxToast.show(context, msg: "Added to cart");
-    } else {
-      VxToast.show(context, msg: "Quantity cannot be zero");
-    }
+      {title, img, sellername, color, qty, tprice, context, vendorID}) async {
+    await firestore.collection(cartCollection).doc().set({
+      'title': title,
+      'img': img,
+      'sellername': sellername,
+      'color': color,
+      'qty': qty,
+      'vendor_id': vendorID,
+      'tprice': tprice,
+      'added_by': auth.currentUser!.uid
+    }).catchError((error) {
+      VxToast.show(context, msg: error.toString());
+    });
   }
 
   resetValues() {
@@ -69,21 +65,19 @@ class ProductController extends GetxController {
     colorIndex.value = 0;
   }
 
-  // Corrected method name and implementation
   addToWishlist(docId, context) async {
     await firestore.collection(productsCollection).doc(docId).set({
       'p_wishlist': FieldValue.arrayUnion([auth.currentUser!.uid])
     }, SetOptions(merge: true));
-    isFav.value = true;
+    isFav(true);
     VxToast.show(context, msg: "Added to wishlist");
   }
 
-  // Corrected method name and implementation
   removeFromWishlist(docId, context) async {
     await firestore.collection(productsCollection).doc(docId).set({
       'p_wishlist': FieldValue.arrayRemove([auth.currentUser!.uid])
     }, SetOptions(merge: true));
-    isFav.value = false;
+    isFav(false);
     VxToast.show(context, msg: "Removed from wishlist");
   }
 
