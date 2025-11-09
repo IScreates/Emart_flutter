@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:myapp/consts/consts.dart';
+import 'package:myapp/controller/cart_controller.dart';
 import 'package:myapp/services/firestore_services.dart';
 import 'package:myapp/widgets_common/our_button.dart';
 
@@ -8,6 +10,7 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(CartController());
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -15,11 +18,9 @@ class CartScreen extends StatelessWidget {
         title: "Shopping Cart".text.color(darkFontGrey).fontFamily(semibold).make(),
       ),
       body: StreamBuilder(
-        // FIXED: Used the correct user ID from the auth instance.
         stream: FirestoreServices.getCart(auth.currentUser!.uid),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
-            // FIXED: Used the standard CircularProgressIndicator widget.
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -29,25 +30,31 @@ class CartScreen extends StatelessWidget {
             );
           } else {
             var data = snapshot.data!.docs;
+            controller.calculate(data);
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   Expanded(
-                        child: ListView.builder(
-                          itemCount: data.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              leading: Image.network('${data[index]['img']}'),
-                            );
-                          },
-                            ),
-                            ),
+                    child: ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          leading: Image.network('${data[index]['img']}'),
+                          title: "${data[index]['title']} (x${data[index]['qty']})".text.fontFamily(semibold).size(16).make(),
+                          subtitle: "${data[index]['tprice']}".numCurrency.text.size(14).color(redColor).fontFamily(semibold).make(),
+                          trailing: const Icon(Icons.delete, color: redColor).onTap(() {
+                            FirestoreServices.deleteDocument(data[index].id);
+                          }),
+                        );
+                      },
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       "Total Price".text.fontFamily(semibold).color(darkFontGrey).make(),
-                      "40".numCurrency.text.fontFamily(semibold).color(redColor).make(),
+                      Obx(() => "${controller.totalP.value}".numCurrency.text.fontFamily(semibold).color(redColor).make()),
                     ],
                   )
                       .box

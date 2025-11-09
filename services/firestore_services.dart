@@ -26,23 +26,32 @@ class FirestoreServices {
   }
 
   //delete document
-  static deleteDocument(docId){
+  static deleteDocument(docId) {
     return firestore.collection(cartCollection).doc(docId).delete();
   }
-  
-  static getCart(id){
-    return firestore.collection(cartCollection).where('added_by', isEqualTo: id).snapshots();
+
+  static getCart(id) {
+    return firestore
+        .collection(cartCollection)
+        .where('added_by', isEqualTo: id)
+        .snapshots();
   }
 
   //get all chat msg
-static getChatMessages(docId){
-    return firestore.collection(chatCollection).doc(docId).collection(messagesCollection).orderBy('created_on', descending: true).snapshots();
-}
+  static getChatMessages(docId) {
+    return firestore
+        .collection(chatCollection)
+        .doc(docId)
+        .collection(messagesCollection)
+        .orderBy('created_on', descending: true)
+        .snapshots();
+  }
 
+  //get all messages
   static getAllMessages() {
     return firestore
         .collection(chatCollection)
-        .where('users', arrayContains: auth.currentUser!.uid)
+        .where('fromId', isEqualTo: auth.currentUser!.uid)
         .snapshots();
   }
 }

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:myapp/consts/consts.dart';
 
 class HomeController extends GetxController {
+
   // Firebase references
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -26,14 +27,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchUserData();
-
-    // ✅ Auto-refresh when switching to Profile tab (index = 3)
-    ever(currentNavIndex, (index) {
-      if (index == 3) {
-        fetchUserData();
-      }
-    });
+    getUsername();
   }
 
   // ✅ Fetch user data from Firestore
@@ -88,4 +82,15 @@ class HomeController extends GetxController {
       debugPrint("❌ Error signing out: $e");
     }
   }
+
+  getUsername() async{
+    var currentUser;
+    var n = await firestore.collection(usersCollection).where('id',isEqualTo: currentUser!.id).get().then((value){
+      if(value.docs.isNotEmpty){
+        return value.docs.single['name'];
+      }
+    });
+    username = n;
+  }
+
 }

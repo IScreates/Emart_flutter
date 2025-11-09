@@ -3,6 +3,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:myapp/consts/consts.dart';
 import 'package:myapp/consts/lists.dart';
 import 'package:myapp/controller/product_controller.dart';
+import 'package:myapp/views/chat_screen/chat_screen.dart';
 
 // ignore: must_be_immutable
 class ItemDetails extends StatelessWidget {
@@ -109,8 +110,12 @@ class ItemDetails extends StatelessWidget {
                             child: Icon(
                               Icons.message_rounded,
                               color: darkFontGrey,
-                            ),
-                          ),
+                            )
+                          ).onTap((){
+                            Get.to(()=>ChatScreen(),
+                              arguments: [data['p_seller'], data['vendor_id ']]
+                            );
+                          })
                         ],
                       ).box.height(60).color(textfieldGrey).padding(const EdgeInsets.symmetric(horizontal: 16)).make(),
 
