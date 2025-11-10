@@ -43,7 +43,16 @@ static getChatMessages(docId){
   static getAllMessages() {
     return firestore
         .collection(chatCollection)
-        .where('users', arrayContains: auth.currentUser!.uid)
+        .where('fromId', isEqualTo: auth.currentUser!.uid)
         .snapshots();
   }
+
+  static getAllOrders(){
+    return firestore.collection(ordersCollection).where('order_by',isEqualTo: auth.currentUser!.uid).snapshots();
+  }
+  
+  static getWishList(){
+    return firestore.collection(productsCollection).where('p_wishlist',arrayContains:  auth.currentUser!.uid).snapshots();
+  }
+
 }

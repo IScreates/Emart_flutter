@@ -7,9 +7,12 @@ import 'package:myapp/controller/auth_controller.dart';
 import 'package:myapp/controller/profile_controller.dart';
 import 'package:myapp/services/firestore_services.dart';
 import 'package:myapp/views/auth_screen/login_screen.dart';
+import 'package:myapp/views/chat_screen/messaging_screen.dart';
 import 'package:myapp/views/messages_screen/messages_screen.dart';
+import 'package:myapp/views/orders_screen/orders_screen.dart';
 import 'package:myapp/views/profile_screen/components/details_cart.dart';
 import 'package:myapp/views/profile_screen/edit_profile.dart';
+import 'package:myapp/views/wishlist_screen/wishlist_screen.dart';
 import 'package:myapp/widgets_common/bg_widget.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -31,6 +34,12 @@ class ProfileScreen extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation(redColor),
                 ),
               );
+            } else if (snapshot.data!.docs.isEmpty) {
+              return Center(
+                  child: "User data not found. Please log out and try again."
+                      .text
+                      .white
+                      .make());
             } else {
               var data = snapshot.data!.docs[0];
 
@@ -68,7 +77,8 @@ class ProfileScreen extends StatelessWidget {
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ).box.roundedFull.clip(Clip.antiAlias).make()
-                                : Image.network(data['imageUrl'], width: 100, fit: BoxFit.cover)
+                                : Image.network(data['imageUrl'],
+                                        width: 100, fit: BoxFit.cover)
                                     .box
                                     .roundedFull
                                     .clip(Clip.antiAlias)
@@ -78,8 +88,17 @@ class ProfileScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  (data['name'] ?? 'User Name').toString().text.fontFamily(semibold).white.make(),
-                                  (data['email'] ?? 'example@gmail.com').toString().text.white.make(),
+                                  (data['name'] ?? 'User Name')
+                                      .toString()
+                                      .text
+                                      .fontFamily(semibold)
+                                      .white
+                                      .make(),
+                                  (data['email'] ?? 'example@gmail.com')
+                                      .toString()
+                                      .text
+                                      .white
+                                      .make(),
                                 ],
                               ),
                             ),
@@ -96,7 +115,11 @@ class ProfileScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.zero,
                                 ),
                               ),
-                              child: "Logout".text.fontFamily(semibold).white.make(),
+                              child: "Logout"
+                                  .text
+                                  .fontFamily(semibold)
+                                  .white
+                                  .make(),
                             ),
                           ],
                         ),
@@ -108,14 +131,22 @@ class ProfileScreen extends StatelessWidget {
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        separatorBuilder: (context, index) => const Divider(color: lightGrey),
+                        separatorBuilder: (context, index) =>
+                            const Divider(color: lightGrey),
                         itemCount: profileButtonsList.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
                             onTap: () {
                               switch (index) {
+                                case 0:
+                                  Get.to(() => const WishlistScreen());
+                                  break;
                                 case 1:
-                                  Get.to(() => const MessagesScreen());
+                                  Get.to(() => const OrdersScreen());
+                                  break;
+
+                                case 2:
+                                  Get.to(() => const MessagingScreen());
                                   break;
                               }
                             },
@@ -123,12 +154,23 @@ class ProfileScreen extends StatelessWidget {
                               profileButtonsIcon[index],
                               width: 22,
                             ),
-                            title: profileButtonsList[index].text.fontFamily(semibold).color(darkFontGrey).make(),
+                            title: profileButtonsList[index]
+                                .text
+                                .fontFamily(semibold)
+                                .color(darkFontGrey)
+                                .make(),
                           );
                         },
-                      ).box.white.rounded.margin(const EdgeInsets.all(12)).padding(
+                      )
+                          .box
+                          .white
+                          .rounded
+                          .margin(const EdgeInsets.all(12))
+                          .padding(
                             const EdgeInsets.symmetric(horizontal: 16),
-                          ).shadowSm.make(),
+                          )
+                          .shadowSm
+                          .make(),
                     ],
                   ),
                 ),

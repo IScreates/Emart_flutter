@@ -53,7 +53,7 @@ class CartScreen extends StatelessWidget {
                       itemCount: data.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          leading: Image.network('${data[index]['img']}'),
+                          leading: Image.network('${data[index]['img']}',width: 80,fit: BoxFit.cover,),
                           title: "${data[index]['title']} (x${data[index]['qty']})".text.fontFamily(semibold).size(16).make(),
                           subtitle: "${data[index]['tprice']}".numCurrency.text.size(14).color(redColor).fontFamily(semibold).make(),
                           trailing: const Icon(Icons.delete, color: redColor).onTap(() {
