@@ -24,6 +24,10 @@ class HomeController extends GetxController {
   // Get current user ID
   String get currentUserId => _auth.currentUser?.uid ?? '';
 
+  var searchController = TextEditingController();
+
+  // ✅ Initialize controller
+
   @override
   void onInit() {
     super.onInit();

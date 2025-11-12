@@ -29,6 +29,7 @@ class WishlistScreen extends StatelessWidget {
           } else {
             var data = snapshot.data!.docs;
             return ListView.builder(
+              shrinkWrap: true,
               itemCount: data.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(

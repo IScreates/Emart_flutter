@@ -5,7 +5,7 @@ import 'package:myapp/consts/consts.dart';
 import 'package:myapp/models/category_model.dart';
 
 class ProductController extends GetxController {
-  var subcat = [];
+  var subcat = <String>[].obs;
 
   var quantity = 0.obs;
   var colorIndex = 0.obs;
@@ -18,8 +18,10 @@ class ProductController extends GetxController {
     var decoded = categoryModelFromJson(data);
     var s = decoded.categories.where((element) => element.name == title).toList();
 
-    for (var e in s[0].subcategory) {
-      subcat.add(e);
+    if (s.isNotEmpty) {
+      for (var e in s[0].subcategory) {
+        subcat.add(e);
+      }
     }
   }
 

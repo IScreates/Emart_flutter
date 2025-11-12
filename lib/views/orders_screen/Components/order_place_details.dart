@@ -12,12 +12,15 @@ Widget orderPlaceDetails( { required title1, required title2,required D1, requir
               "$D1".text.color(redColor).fontFamily(semibold).make()
             ],
           ),
-          Column(
+          SizedBox(
+            width: 130,
+          child:Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               "$title2".text.fontFamily(semibold).make(),
               "$D2".text.color(redColor).fontFamily(semibold).make()
             ],
+          ),
           ),
         ],
       )

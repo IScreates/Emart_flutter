@@ -55,4 +55,20 @@ static getChatMessages(docId){
     return firestore.collection(productsCollection).where('p_wishlist',arrayContains:  auth.currentUser!.uid).snapshots();
   }
 
+  static allProducts(){
+    return firestore
+        .collection(productsCollection)
+        .snapshots();
+  }
+
+  // get featuredproduct
+static getFeaturedProducts() {
+    return firestore.collection(productsCollection).where('is_Featured',isEqualTo: true).get();
+}
+
+static searchProducts(title){
+    return firestore.collection(productsCollection).get();
+}
+
+
 }

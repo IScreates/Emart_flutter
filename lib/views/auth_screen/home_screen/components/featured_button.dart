@@ -1,4 +1,7 @@
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:myapp/consts/consts.dart';
+import 'package:myapp/views/category_screen/category_details.dart';
 
 Widget featuredButton({String? title, icon}) {
   return Row(
@@ -14,5 +17,7 @@ Widget featuredButton({String? title, icon}) {
       .padding(EdgeInsets.all(4))
       .roundedSM
       .outerShadowSm
-      .make();
+      .make().onTap((){
+        Get.to(()=>CategoryDetails(title: title));
+  });
 }
